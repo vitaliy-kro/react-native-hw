@@ -11,10 +11,11 @@ import {
   Dimensions,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from "react-native";
-import styles from "../styles/auths.styles";
+import styles from "../../styles/auths.styles";
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({ navigation, route }) {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +23,8 @@ export default function RegistrationScreen() {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-
+  const { setIsAuth } = route.params;
+  console.log("setIsAuth:", setIsAuth);
   useEffect(() => {
     const onChangeScreenOrientation = () => {
       const windowWidth = Dimensions.get("window").width;
@@ -43,15 +45,17 @@ export default function RegistrationScreen() {
       email,
       password,
     });
+
     setLogin("");
     setEmail("");
     setPassword("");
     Keyboard.dismiss();
+    setIsAuth(true);
   };
 
   return (
     <ImageBackground
-      source={require("../images/auth-bck.png")}
+      source={require("../../images/auth-bck.png")}
       style={styles.bckImage}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -62,6 +66,15 @@ export default function RegistrationScreen() {
           }}
         >
           <View style={styles.avatar}>
+            <Image
+              source={require("../../images/userPhoto.jpg")}
+              style={{
+                height: 120,
+                width: 120,
+                borderRadius: 16,
+                position: "absolute",
+              }}
+            />
             <TouchableOpacity style={styles.addAvatarBtn}>
               <Text style={{ color: "#FF6C00" }}>+</Text>
             </TouchableOpacity>
@@ -113,7 +126,10 @@ export default function RegistrationScreen() {
               <TouchableOpacity style={styles.authBtn} onPress={onRegister}>
                 <Text>Зареєструватися</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.loginRedirectBtn}>
+              <TouchableOpacity
+                style={styles.loginRedirectBtn}
+                onPress={() => navigation.navigate("Login")}
+              >
                 <Text style={styles.redirectBtnText}>Вже є акаунт? Ввійти</Text>
               </TouchableOpacity>
             </View>

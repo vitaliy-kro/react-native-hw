@@ -12,9 +12,9 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import styles from "../styles/auths.styles";
+import styles from "../../styles/auths.styles";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation, route }) {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +22,7 @@ export default function LoginScreen() {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
+  const { seIsAuth } = route.params;
 
   useEffect(() => {
     const onChangeScreenOrientation = () => {
@@ -47,11 +48,12 @@ export default function LoginScreen() {
     setEmail("");
     setPassword("");
     Keyboard.dismiss();
+    setIsAuth(true);
   };
 
   return (
     <ImageBackground
-      source={require("../images/auth-bck.png")}
+      source={require("../../images/auth-bck.png")}
       style={styles.bckImage}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -103,7 +105,10 @@ export default function LoginScreen() {
               <TouchableOpacity style={styles.authBtn} onPress={onRegister}>
                 <Text>Ввійти</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.loginRedirectBtn}>
+              <TouchableOpacity
+                style={styles.loginRedirectBtn}
+                onPress={() => navigation.navigate("Register")}
+              >
                 <Text style={styles.redirectBtnText}>
                   Немає акаунту? Зареєструватися
                 </Text>

@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   container: {
-    // height: 549,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
 
@@ -15,14 +14,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
-    backgroundColor: "#F6F6F6",
+    // backgroundColor: "#F6F6F6",
     height: 120,
     width: 120,
-    borderRadius: 16,
+    // borderRadius: 16,
     marginTop: -60,
     justifyContent: "flex-end",
     alignItems: "flex-end",
     marginBottom: 32,
+    position: "relative",
   },
   addAvatarBtn: {
     width: 25,
