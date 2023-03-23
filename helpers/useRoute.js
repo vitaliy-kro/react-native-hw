@@ -6,7 +6,6 @@ import LoginScreen from "../screens/auth/LoginScreen";
 import DefaultPostsScreen from "../screens/posts/DefaultPostsScreen";
 import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import AddPostScreen from "../screens/posts/AddPostScreen";
-import UserScreen from "../screens/user/UserScreen";
 import DefaultUserScreen from "../screens/user/DefaultUserScreen";
 
 const AuthStack = createStackNavigator();

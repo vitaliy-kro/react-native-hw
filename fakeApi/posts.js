@@ -7,6 +7,7 @@ export const posts = [
     comments: [
       {
         author: "someUser",
+        avatar: "https://picsum.photos/200",
         comment:
           "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!",
         date: "09 червня, 2020 | 08:40",
@@ -19,6 +20,7 @@ export const posts = [
       },
       {
         author: "someUser",
+        avatar: "https://picsum.photos/200",
         comment: "Thank you! That was very helpful!",
         date: "09 червня, 2020 | 09:20",
       },
@@ -51,6 +53,7 @@ export const posts = [
     comments: [
       {
         author: "someUser",
+        avatar: "https://picsum.photos/200",
         comment:
           "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!",
         date: "09 червня, 2020 | 08:40",
@@ -63,6 +66,7 @@ export const posts = [
       },
       {
         author: "someUser",
+        avatar: "https://picsum.photos/200",
         comment: "Thank you! That was very helpful!",
         date: "09 червня, 2020 | 09:20",
       },

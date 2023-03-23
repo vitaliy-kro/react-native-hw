@@ -4,12 +4,10 @@ import MapView, { Marker } from "react-native-maps";
 
 function Map({ route }) {
   const [location, setLocation] = useState(null);
-
   const { params } = route;
+
   useEffect(() => {
     setLocation(params.location);
-    console.log("params=>", params);
-    console.log("location:", location);
   }, []);
 
   return (

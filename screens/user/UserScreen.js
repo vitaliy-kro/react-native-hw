@@ -119,7 +119,7 @@ export default function UserScreen({ navigation }) {
                     marginLeft: "auto",
                   }}
                   onPress={() => {
-                    navigation.navigate("Map", { post });
+                    navigation.navigate("Map", { location: post.location });
                   }}
                 >
                   <Feather name="map-pin" size={24} color="#BDBDBD" />
