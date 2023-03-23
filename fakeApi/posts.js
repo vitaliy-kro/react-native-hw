@@ -26,6 +26,8 @@ export const posts = [
     location: {
       city: "Ternopil",
       country: "Ukraine",
+      latitude: 37.78825,
+      longitude: -122.4324,
     },
   },
   {
@@ -37,6 +39,8 @@ export const posts = [
     location: {
       city: "Ternopil",
       country: "Ukraine",
+      latitude: 37.78825,
+      longitude: -122.4324,
     },
   },
   {
@@ -66,6 +70,8 @@ export const posts = [
     location: {
       city: "Ternopil",
       country: "Ukraine",
+      latitude: 37.78825,
+      longitude: -122.4324,
     },
   },
 ];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { postsStyles } from "../../styles/posts.styles";
 import { posts } from "../../fakeApi/posts";
@@ -103,25 +103,28 @@ export default function PostsScreen({ navigation }) {
                   color="#BDBDBD"
                   style={{ transform: [{ scaleX: -1 }] }}
                   onPress={() => {
-                    // navigation.navigate("Comments");
+                    navigation.navigate("Comments", { post });
                   }}
                 />
                 <Text style={postsStyles.postComment}>
                   {post.comments.length}
                 </Text>
               </View>
-              <View
+              <TouchableOpacity
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
+                }}
+                onPress={() => {
+                  navigation.navigate("Map", { location: post.location });
                 }}
               >
                 <Feather name="map-pin" size={24} color="#BDBDBD" />
                 <Text
                   style={postsStyles.postLocation}
                 >{`${post.location.city}, ${post.location.country}`}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         );

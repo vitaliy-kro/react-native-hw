@@ -1,4 +1,8 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { useState } from "react";
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import {
   Roboto_400Regular,
   Roboto_500Medium,
@@ -6,11 +10,12 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { useRoute } from "./helpers/useRoute";
-import { useState } from "react";
 
 export default function App() {
   const [isAuth, setIsAuth] = useState(true);
-  const routing = useRoute(isAuth, setIsAuth);
+  const navigationRef = useNavigationContainerRef();
+
+  const routing = useRoute(isAuth, setIsAuth, navigationRef);
 
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
@@ -21,5 +26,7 @@ export default function App() {
     return null;
   }
 
-  return <NavigationContainer>{routing}</NavigationContainer>;
+  return (
+    <NavigationContainer ref={navigationRef}>{routing}</NavigationContainer>
+  );
 }

@@ -12,7 +12,7 @@ import { postsStyles } from "../../styles/posts.styles";
 import { userStyles } from "../../styles/user.styles";
 import { posts } from "../../fakeApi/posts";
 
-export default function UserScreen() {
+export default function UserScreen({ navigation }) {
   return (
     <ImageBackground
       source={require("../../images/auth-bck.png")}
@@ -94,7 +94,7 @@ export default function UserScreen() {
                       transform: [{ scaleX: -1 }],
                     }}
                     onPress={() => {
-                      // navigation.navigate("Comments");
+                      navigation.navigate("Comments", { post });
                     }}
                   />
                   <Text style={postsStyles.postComment}>
@@ -111,19 +111,22 @@ export default function UserScreen() {
                   <Feather name="thumbs-up" size={24} color="#FF6C00" />
                   <Text style={postsStyles.postComment}>{post.likes}</Text>
                 </View>
-                <View
+                <TouchableOpacity
                   style={{
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
                     marginLeft: "auto",
                   }}
+                  onPress={() => {
+                    navigation.navigate("Map", { post });
+                  }}
                 >
                   <Feather name="map-pin" size={24} color="#BDBDBD" />
                   <Text style={postsStyles.postLocation}>
                     {post.location.country}
                   </Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           ))}

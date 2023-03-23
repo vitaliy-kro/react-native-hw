@@ -1,19 +1,22 @@
-import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import RegistrationScreen from "../screens/auth/RegistrationScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
-import PostsScreen from "../screens/posts/PostsScreen";
+import DefaultPostsScreen from "../screens/posts/DefaultPostsScreen";
 import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import AddPostScreen from "../screens/posts/AddPostScreen";
 import UserScreen from "../screens/user/UserScreen";
-// import CommentsScreen from "../screens/posts/CommentsScreen";
+import DefaultUserScreen from "../screens/user/DefaultUserScreen";
 
 const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-export const useRoute = (isAuth, setIsAuth) => {
+export const useRoute = (isAuth, setIsAuth, navigation) => {
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   if (!isAuth) {
     return (
       <AuthStack.Navigator initialRouteName="Register">
@@ -40,34 +43,14 @@ export const useRoute = (isAuth, setIsAuth) => {
           height: 80,
         },
       }}
-      initialRouteName="Posts"
+      initialRouteName="DefaultPosts"
     >
       <MainTab.Screen
-        name="Posts"
-        component={PostsScreen}
+        name="DefaultPosts"
+        component={DefaultPostsScreen}
         initialParams={{ setIsAuth }}
         options={{
-          title: "Публікації",
-          headerTitleStyle: {
-            fontFamily: "Roboto_500Medium",
-            fontSize: 17,
-            lineHeight: 22,
-            alignItems: "center",
-            textAlign: "center",
-            color: "#212121",
-          },
-          headerRight: () => {
-            return (
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => {
-                  alert("Logouted");
-                }}
-              >
-                <MaterialIcons name="logout" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-            );
-          },
+          headerShown: false,
           tabBarIcon: ({ focused, size, color }) => {
             return (
               <MaterialIcons
@@ -103,7 +86,7 @@ export const useRoute = (isAuth, setIsAuth) => {
               <TouchableOpacity
                 style={{ marginLeft: 16 }}
                 onPress={() => {
-                  alert("Back to Posts");
+                  handleGoBack();
                 }}
               >
                 <Feather
@@ -133,7 +116,7 @@ export const useRoute = (isAuth, setIsAuth) => {
       />
       <MainTab.Screen
         name="Profile"
-        component={UserScreen}
+        component={DefaultUserScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => {
