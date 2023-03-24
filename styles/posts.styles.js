@@ -90,7 +90,7 @@ export const postsStyles = StyleSheet.create({
     textDecorationLine: "underline",
     marginLeft: 3,
   },
-  commentAvatar: { height: 28, width: 28, borderRadius: "50%" },
+  commentAvatar: { height: 28, width: 28, borderRadius: 28 / 2 },
   commentText: {
     fontFamily: "Roboto_400Regular",
     fontSize: 13,
@@ -120,6 +120,6 @@ export const postsStyles = StyleSheet.create({
     padding: 10,
     marginRight: 8,
     backgroundColor: "#FF6C00",
-    borderRadius: "50%",
+    borderRadius: 34 / 2,
   },
 });

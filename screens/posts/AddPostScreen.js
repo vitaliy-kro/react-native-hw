@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,14 +8,34 @@ import {
   ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { postsStyles } from "../../styles/posts.styles";
 import styles from "../../styles/auths.styles";
 
-export default function AddPostScreen() {
+export default function AddPostScreen({ navigation }) {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    const launchCamera = async () => {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    };
+    if (!image) {
+      launchCamera();
+    }
+  }, []);
+
   const handlePickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -77,19 +97,34 @@ export default function AddPostScreen() {
             marginLeft: 8,
             width: "100%",
           }}
-          value={location}
-          onChangeText={(text) => setLocation(text)}
+          value={locationName}
+          onChangeText={(text) => setLocationName(text)}
           placeholder="Місцевість..."
           placeholderTextColor="#BDBDBD"
         />
       </View>
       <TouchableOpacity
-        disabled={image && name && location ? false : true}
+        disabled={image && name && locationName ? false : true}
         style={{
           ...styles.authBtn,
           marginTop: 32,
           marginBottom: 0,
           backgroundColor: image && name && location ? "#FF6C00" : "#F6F6F6",
+        }}
+        onPress={async () => {
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== "granted") {
+            alert("Permission to access location was denied");
+            return;
+          }
+
+          let location = await Location.getCurrentPositionAsync({});
+          const coords = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          };
+          setLocation(coords);
+          navigation.navigate("Posts", { image, name, locationName, location });
         }}
       >
         <Text
