@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import styles from "../../styles/auths.styles";
 import { postsStyles } from "../../styles/posts.styles";
@@ -17,14 +18,31 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { logout } from "../../redux/auth/operations";
 import { user } from "../../redux/selectors/authSelectors";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { user } from "../../redux/selectors/authSelectors";
 
 export default function UserScreen({ navigation }) {
+  const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
+  const { userId, nickname, avatar } = useSelector(user);
   const dispatch = useDispatch();
-  const { userId } = useSelector(user);
+
   useEffect(() => {
     getUserPosts();
   }, []);
+
+  const handlePickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const getUserPosts = async () => {
     const postsRef = await collection(db, "posts");
@@ -70,7 +88,7 @@ export default function UserScreen({ navigation }) {
                   borderRadius: 16,
                   position: "absolute",
                 }}
-                source={require("../../images/userPhoto.jpg")}
+                source={avatar && { uri: avatar }}
               />
               <TouchableOpacity
                 style={{
@@ -91,7 +109,7 @@ export default function UserScreen({ navigation }) {
               style={{ position: "absolute", right: 0 }}
             />
           </View>
-          <Text style={{ ...userStyles.title }}>Natali Romanova</Text>
+          <Text style={{ ...userStyles.title }}>{nickname}</Text>
           {posts.map((post) => (
             <View style={{ marginTop: 32 }} key={post.id}>
               <Image

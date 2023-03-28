@@ -13,6 +13,7 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import styles from "../../styles/auths.styles";
 import { register } from "../../redux/auth/operations";
 
@@ -26,6 +27,16 @@ export default function RegistrationScreen({ navigation }) {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
+  useEffect(() => {
+    const onChangeScreenOrientation = () => {
+      const windowWidth = Dimensions.get("window").width;
+      setDimensions(windowWidth - 16 * 2);
+    };
+    Dimensions.addEventListener("change", onChangeScreenOrientation);
+    return () => {
+      Dimensions.removeEventListener("change", onChangeScreenOrientation);
+    };
+  }, []);
 
   const handlePickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -40,18 +51,20 @@ export default function RegistrationScreen({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    const onChangeScreenOrientation = () => {
-      const windowWidth = Dimensions.get("window").width;
-      setDimensions(windowWidth - 16 * 2);
-    };
-    Dimensions.addEventListener("change", onChangeScreenOrientation);
-    return () => {
-      Dimensions.removeEventListener("change", onChangeScreenOrientation);
-    };
-  }, []);
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(image);
+    const file = await response.blob();
+    const uniqueId = Date.now().toString();
 
-  const onRegister = () => {
+    const storageRef = await ref(storage, `authImage/${uniqueId}`);
+    await uploadBytes(storageRef, file);
+
+    const processedPhoto = await getDownloadURL(storageRef);
+
+    return processedPhoto;
+  };
+
+  const onRegister = async () => {
     if (!login || !email || !password) {
       return alert("Every input is required");
     }
@@ -61,8 +74,8 @@ export default function RegistrationScreen({ navigation }) {
       email,
       password,
     });
-
-    dispatch(register({ email, password, login, image }));
+    const uploatedImage = await uploadPhotoToServer();
+    dispatch(register({ email, password, login, image: uploatedImage }));
     setLogin("");
     setEmail("");
     setPassword("");

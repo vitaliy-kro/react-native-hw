@@ -5,9 +5,12 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { postsStyles } from "../../styles/posts.styles";
 import { db } from "../../firebase/config";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { user } from "../../redux/selectors/authSelectors";
 
 export default function PostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
+  const { nickname, avatar, email } = useSelector(user);
   const getAllPosts = async () => {
     const unsub = await onSnapshot(doc(db, "posts"));
     unsub.forEach((doc) => {
@@ -24,11 +27,11 @@ export default function PostsScreen({ navigation }) {
       <View style={postsStyles.userInformation}>
         <Image
           style={postsStyles.userPhoto}
-          source={require("../../images/userPhoto.jpg")}
+          source={avatar && { uri: avatar }}
         />
         <View style={postsStyles.userCredentials}>
-          <Text style={postsStyles.userName}>Natali Romanova</Text>
-          <Text style={postsStyles.userEmail}>email@example.com</Text>
+          <Text style={postsStyles.userName}>{nickname}</Text>
+          <Text style={postsStyles.userEmail}>{email}</Text>
         </View>
       </View>
       {posts.length !== 0 &&
