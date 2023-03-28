@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { useDispatch } from "react-redux";
 import {
   View,
   TextInput,
@@ -14,8 +14,11 @@ import {
   Image,
 } from "react-native";
 import styles from "../../styles/auths.styles";
+import { register } from "../../redux/auth/operations";
 
-export default function RegistrationScreen({ navigation, route }) {
+export default function RegistrationScreen({ navigation }) {
+  const dispatch = useDispatch();
+  const [image, setImage] = useState(null);
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +26,20 @@ export default function RegistrationScreen({ navigation, route }) {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-  const { setIsAuth } = route.params;
-  console.log("setIsAuth:", setIsAuth);
+
+  const handlePickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   useEffect(() => {
     const onChangeScreenOrientation = () => {
       const windowWidth = Dimensions.get("window").width;
@@ -40,17 +55,18 @@ export default function RegistrationScreen({ navigation, route }) {
     if (!login || !email || !password) {
       return alert("Every input is required");
     }
+
     console.log({
       login,
       email,
       password,
     });
 
+    dispatch(register({ email, password, login, image }));
     setLogin("");
     setEmail("");
     setPassword("");
     Keyboard.dismiss();
-    setIsAuth(true);
   };
 
   return (
@@ -67,15 +83,25 @@ export default function RegistrationScreen({ navigation, route }) {
         >
           <View style={styles.avatar}>
             <Image
-              source={require("../../images/userPhoto.jpg")}
+              source={image && { uri: image }}
               style={{
                 height: 120,
                 width: 120,
                 borderRadius: 16,
                 position: "absolute",
+                backgroundColor: !image && "#F6F6F6",
               }}
             />
-            <TouchableOpacity style={styles.addAvatarBtn}>
+            <TouchableOpacity
+              style={{
+                ...styles.addAvatarBtn,
+                transform: image && [{ rotate: "45deg" }],
+                borderColor: image ? "#BDBDBD" : "#FF6C00",
+              }}
+              onPress={() => {
+                handlePickImage();
+              }}
+            >
               <Text style={{ color: "#FF6C00" }}>+</Text>
             </TouchableOpacity>
           </View>

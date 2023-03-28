@@ -1,13 +1,16 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { useDispatch } from "react-redux";
 import { TouchableOpacity } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import CommentsScreen from "./CommentsScreen";
 import PostsScreen from "./PostsScreen";
 import MapScreen from "./MapScreen";
+import { logout } from "../../redux/auth/operations";
 
 const PostsStack = createStackNavigator();
 
 function DefaultPostsScreen({ navigation }) {
+  const dispatch = useDispatch();
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -38,7 +41,7 @@ function DefaultPostsScreen({ navigation }) {
               <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
-                  alert("Logouted");
+                  dispatch(logout());
                 }}
               >
                 <MaterialIcons name="logout" size={24} color="#BDBDBD" />

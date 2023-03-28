@@ -1,13 +1,26 @@
 import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 import { View, Image, Text, ScrollView, TextInput } from "react-native";
 import { postsStyles } from "../../styles/posts.styles";
+import { user } from "../../redux/selectors/authSelectors";
 
 export default function CommentsScreen({ route }) {
   const { params } = route;
-  console.log("params:", params);
   const [post, setPost] = useState(null);
   const [comment, setComment] = useState("");
+  const { nickname } = useSelector(user);
+
+  const createComment = async () => {
+    if (!comment.trim()) {
+      await setDoc(doc(db, "posts", "comments"), {
+        comment,
+        nickname,
+      });
+    }
+  };
 
   useEffect(() => {
     if (params.post) {
@@ -29,13 +42,13 @@ export default function CommentsScreen({ route }) {
           <View
             style={{
               display: "flex",
-              flexDirection: c.author === "me" ? "row" : "row-reverse",
+              flexDirection: c.author === nickname ? "row" : "row-reverse",
             }}
             key={i}
           >
             <Image
               source={
-                c.author === "me"
+                c.author === nickname
                   ? require("../../images/userPhoto.jpg")
                   : { uri: c.avatar }
               }
@@ -48,10 +61,10 @@ export default function CommentsScreen({ route }) {
                 padding: 16,
                 borderBottomLeftRadius: 6,
                 borderBottomRightRadius: 6,
-                borderTopLeftRadius: c.author === "me" ? 0 : 6,
-                borderTopRightRadius: c.author === "me" ? 6 : 0,
-                marginLeft: c.author === "me" ? 8 : 0,
-                marginRight: c.author === "me" ? 0 : 8,
+                borderTopLeftRadius: c.author === nickname ? 0 : 6,
+                borderTopRightRadius: c.author === nickname ? 6 : 0,
+                marginLeft: c.author === nickname ? 8 : 0,
+                marginRight: c.author === nickname ? 0 : 8,
                 marginBottom: i === post.comments.length - 1 ? 31 : 24,
               }}
             >
@@ -59,7 +72,7 @@ export default function CommentsScreen({ route }) {
               <Text
                 style={{
                   ...postsStyles.commentDate,
-                  textAlign: c.author === "me" ? "left" : "right",
+                  textAlign: c.author === nickname ? "left" : "right",
                 }}
               >
                 {c.date}
@@ -88,6 +101,9 @@ export default function CommentsScreen({ route }) {
           size={24}
           color="#ffffff"
           style={postsStyles.commentAddButton}
+          onPress={() => {
+            createComment();
+          }}
         />
       </View>
     </ScrollView>

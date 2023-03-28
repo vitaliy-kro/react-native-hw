@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Image,
   ImageBackground,
@@ -10,16 +12,40 @@ import { MaterialIcons, Feather } from "@expo/vector-icons";
 import styles from "../../styles/auths.styles";
 import { postsStyles } from "../../styles/posts.styles";
 import { userStyles } from "../../styles/user.styles";
-import { posts } from "../../fakeApi/posts";
+import { db } from "../../firebase/config";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { logout } from "../../redux/auth/operations";
+import { user } from "../../redux/selectors/authSelectors";
+import { useState } from "react";
 
 export default function UserScreen({ navigation }) {
+  const [posts, setPosts] = useState([]);
+  const dispatch = useDispatch();
+  const { userId } = useSelector(user);
+  useEffect(() => {
+    getUserPosts();
+  }, []);
+
+  const getUserPosts = async () => {
+    const postsRef = await collection(db, "posts");
+    const q = query(postsRef, where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setPosts([{ id: doc.id, ...doc.data() }]);
+    });
+  };
+
   return (
     <ImageBackground
       source={require("../../images/auth-bck.png")}
       style={styles.bckImage}
     >
       <ScrollView
-        contentContainerStyle={{ ...styles.container, marginTop: 100 }}
+        contentContainerStyle={{
+          ...styles.container,
+          marginTop: 100,
+          height: "100%",
+        }}
       >
         <View
           style={{
@@ -61,7 +87,7 @@ export default function UserScreen({ navigation }) {
               name="logout"
               size={24}
               color="#BDBDBD"
-              onPress={() => console.log("Logout")}
+              onPress={() => dispatch(logout())}
               style={{ position: "absolute", right: 0 }}
             />
           </View>
@@ -124,7 +150,7 @@ export default function UserScreen({ navigation }) {
                 >
                   <Feather name="map-pin" size={24} color="#BDBDBD" />
                   <Text style={postsStyles.postLocation}>
-                    {post.location.country}
+                    {post.location.locationName}
                   </Text>
                 </TouchableOpacity>
               </View>
