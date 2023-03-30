@@ -26,69 +26,95 @@ export default function AddPostScreen({ navigation }) {
 
   const { userId, nickname } = useSelector(user);
 
+  const handleCoordsSet = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocationCoords(coords);
+  };
+
   useEffect(() => {
-    const launchCamera = async () => {
-      const result = await ImagePicker.launchCameraAsync({
+    try {
+      handleCoordsSet();
+      const launchCamera = async () => {
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+        if (!result.canceled) {
+          setImage(result.assets[0].uri);
+        }
+      };
+      if (!image) {
+        launchCamera();
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }, []);
+
+  const handlePickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
+
       if (!result.canceled) {
         setImage(result.assets[0].uri);
       }
-    };
-    if (!image) {
-      launchCamera();
-    }
-  }, []);
-
-  const handlePickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    } catch (error) {
+      alert(error);
     }
   };
   const uploadPostToServer = async () => {
-    console.log(locationCoords);
-    const photo = await uploadPhotoToServer();
-    await addDoc(collection(db, "posts"), {
-      image: photo,
-      name,
-      location: {
-        locationName,
-        latitude: locationCoords.latitude,
-        longitude: locationCoords.longitude,
-      },
-      userId,
-      nickname,
-      likes: 0,
-      comments: [],
-    });
-    setImage(null);
-    setName("");
-    setLocationName("");
-    setLocationCoords(null);
-    console.log("Done");
+    try {
+      const photo = await uploadPhotoToServer();
+      await addDoc(collection(db, "posts"), {
+        image: photo,
+        name,
+        location: {
+          locationName,
+          latitude: locationCoords.latitude,
+          longitude: locationCoords.longitude,
+        },
+        userId,
+        nickname,
+        likes: 0,
+        comments: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const uploadPhotoToServer = async () => {
-    const response = await fetch(image);
-    const file = await response.blob();
-    const uniqueId = Date.now().toString();
+    try {
+      const response = await fetch(image);
+      const file = await response.blob();
+      const uniqueId = Date.now().toString();
 
-    const storageRef = await ref(storage, `postImage/${uniqueId}`);
-    await uploadBytes(storageRef, file);
+      const storageRef = await ref(storage, `postImage/${uniqueId}`);
+      await uploadBytes(storageRef, file);
 
-    const processedPhoto = await getDownloadURL(storageRef);
+      const processedPhoto = await getDownloadURL(storageRef);
 
-    return processedPhoto;
+      return processedPhoto;
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
@@ -155,25 +181,17 @@ export default function AddPostScreen({ navigation }) {
             image && name && locationName ? "#FF6C00" : "#F6F6F6",
         }}
         onPress={async () => {
-          let { status } = await Location.requestForegroundPermissionsAsync();
-          if (status !== "granted") {
-            alert("Permission to access location was denied");
-            return;
-          }
-
-          let location = await Location.getCurrentPositionAsync({});
-          const coords = {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          };
-          setLocationCoords(coords);
           uploadPostToServer();
-          navigation.navigate("Posts", { image, name, locationName, location });
+          setImage(null);
+          setName("");
+          setLocationName("");
+          setLocationCoords(null);
+          navigation.navigate("Posts");
         }}
       >
         <Text
           style={{
-            color: image && name && location ? "#FFFFFF" : "#BDBDBD",
+            color: image && name && locationName ? "#FFFFFF" : "#BDBDBD",
           }}
         >
           Опублікувати

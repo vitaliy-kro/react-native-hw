@@ -74,8 +74,8 @@ export default function RegistrationScreen({ navigation }) {
       email,
       password,
     });
-    const uploatedImage = await uploadPhotoToServer();
-    dispatch(register({ email, password, login, image: uploatedImage }));
+    // const uploatedImage = await uploadPhotoToServer();
+    dispatch(register({ email, password, login }));
     setLogin("");
     setEmail("");
     setPassword("");

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, collection, query } from "firebase/firestore";
 import { postsStyles } from "../../styles/posts.styles";
 import { db } from "../../firebase/config";
 import { useState } from "react";
@@ -12,11 +12,11 @@ export default function PostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
   const { nickname, avatar, email } = useSelector(user);
   const getAllPosts = async () => {
-    const unsub = await onSnapshot(doc(db, "posts"));
-
-    unsub.forEach((doc) => {
-      setPosts([{ id: doc.id, ...doc.data() }]);
-      console.log(posts);
+    await onSnapshot(query(collection(db, "posts")), (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        console.log("doc:", doc.data);
+        setPosts((posts) => [...posts, { id: doc.id, ...doc.data() }]);
+      });
     });
   };
 

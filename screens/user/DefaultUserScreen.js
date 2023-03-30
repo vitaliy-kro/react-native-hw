@@ -16,7 +16,7 @@ function DefaultUserScreen({ navigation }) {
     <UserStack.Navigator
       initialRouteName="User"
       screenOptions={{
-        headerTitleAlign: "center",
+        headerShown: false,
         tabBarStyle: {
           height: 80,
         },

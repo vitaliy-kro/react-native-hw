@@ -18,7 +18,11 @@ export const useRoute = (isAuth, navigation) => {
 
   if (!isAuth) {
     return (
-      <AuthStack.Navigator initialRouteName="Register">
+      <AuthStack.Navigator
+        screenOptions={{ headerShown: false }}
+        // navigationOptions={{}}
+        initialRouteName="Register"
+      >
         <AuthStack.Screen name="Register" component={RegistrationScreen} />
         <AuthStack.Screen name="Login" component={LoginScreen} />
       </AuthStack.Navigator>
