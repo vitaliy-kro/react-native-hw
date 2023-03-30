@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -7,17 +8,23 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { MaterialIcons, Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
-import { MaterialIcons, Feather } from "@expo/vector-icons";
+import { collection, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage, db } from "../../firebase/config";
 import { postsStyles } from "../../styles/posts.styles";
 import styles from "../../styles/auths.styles";
+import { user } from "../../redux/selectors/authSelectors";
 
 export default function AddPostScreen({ navigation }) {
   const [image, setImage] = useState(null);
   const [name, setName] = useState("");
   const [locationName, setLocationName] = useState("");
-  const [location, setLocation] = useState(null);
+  const [locationCoords, setLocationCoords] = useState(null);
+
+  const { userId, nickname } = useSelector(user);
 
   useEffect(() => {
     const launchCamera = async () => {
@@ -47,6 +54,41 @@ export default function AddPostScreen({ navigation }) {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  };
+  const uploadPostToServer = async () => {
+    console.log(locationCoords);
+    const photo = await uploadPhotoToServer();
+    await addDoc(collection(db, "posts"), {
+      image: photo,
+      name,
+      location: {
+        locationName,
+        latitude: locationCoords.latitude,
+        longitude: locationCoords.longitude,
+      },
+      userId,
+      nickname,
+      likes: 0,
+      comments: [],
+    });
+    setImage(null);
+    setName("");
+    setLocationName("");
+    setLocationCoords(null);
+    console.log("Done");
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(image);
+    const file = await response.blob();
+    const uniqueId = Date.now().toString();
+
+    const storageRef = await ref(storage, `postImage/${uniqueId}`);
+    await uploadBytes(storageRef, file);
+
+    const processedPhoto = await getDownloadURL(storageRef);
+
+    return processedPhoto;
   };
 
   return (
@@ -109,7 +151,8 @@ export default function AddPostScreen({ navigation }) {
           ...styles.authBtn,
           marginTop: 32,
           marginBottom: 0,
-          backgroundColor: image && name && location ? "#FF6C00" : "#F6F6F6",
+          backgroundColor:
+            image && name && locationName ? "#FF6C00" : "#F6F6F6",
         }}
         onPress={async () => {
           let { status } = await Location.requestForegroundPermissionsAsync();
@@ -123,7 +166,8 @@ export default function AddPostScreen({ navigation }) {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           };
-          setLocation(coords);
+          setLocationCoords(coords);
+          uploadPostToServer();
           navigation.navigate("Posts", { image, name, locationName, location });
         }}
       >

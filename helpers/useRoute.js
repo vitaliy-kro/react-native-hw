@@ -11,7 +11,7 @@ import DefaultUserScreen from "../screens/user/DefaultUserScreen";
 const AuthStack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
-export const useRoute = (isAuth, setIsAuth, navigation) => {
+export const useRoute = (isAuth, navigation) => {
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -19,16 +19,8 @@ export const useRoute = (isAuth, setIsAuth, navigation) => {
   if (!isAuth) {
     return (
       <AuthStack.Navigator initialRouteName="Register">
-        <AuthStack.Screen
-          name="Register"
-          component={RegistrationScreen}
-          initialParams={{ setIsAuth }}
-        />
-        <AuthStack.Screen
-          name="Login"
-          component={LoginScreen}
-          initialParams={{ setIsAuth }}
-        />
+        <AuthStack.Screen name="Register" component={RegistrationScreen} />
+        <AuthStack.Screen name="Login" component={LoginScreen} />
       </AuthStack.Navigator>
     );
   }
@@ -47,7 +39,6 @@ export const useRoute = (isAuth, setIsAuth, navigation) => {
       <MainTab.Screen
         name="DefaultPosts"
         component={DefaultPostsScreen}
-        initialParams={{ setIsAuth }}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => {

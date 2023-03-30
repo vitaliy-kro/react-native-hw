@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { useDispatch } from "react-redux";
 import {
   View,
   TextInput,
@@ -12,17 +12,18 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import { login } from "../../redux/auth/operations";
 import styles from "../../styles/auths.styles";
 
-export default function LoginScreen({ navigation, route }) {
-  const [login, setLogin] = useState("");
+export default function LoginScreen({ navigation }) {
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [shouldSecurePass, setShouldSecurePass] = useState(true);
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-  const { seIsAuth } = route.params;
 
   useEffect(() => {
     const onChangeScreenOrientation = () => {
@@ -36,19 +37,18 @@ export default function LoginScreen({ navigation, route }) {
   }, []);
 
   const onRegister = () => {
-    if (!login || !email || !password) {
+    if (!email || !password) {
       return alert("Every input is required");
     }
     console.log({
-      login,
       email,
       password,
     });
-    setLogin("");
     setEmail("");
     setPassword("");
     Keyboard.dismiss();
-    setIsAuth(true);
+    dispatch(login({ email, password }));
+    // setIsAuth(true);
   };
 
   return (
