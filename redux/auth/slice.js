@@ -19,21 +19,21 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.userId = action.payload.uid;
         state.nickname = action.payload.displayName;
-        state.avatar = action.payload.photoURL;
+        // state.avatar = action.payload.photoURL;
         state.email = action.payload.email;
         state.stateChange = true;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.userId = action.payload.uid;
         state.nickname = action.payload.displayName;
-        state.avatar = action.payload.photoURL;
+        // state.avatar = action.payload.photoURL;
         state.email = action.payload.email;
         state.stateChange = true;
       })
       .addCase(authStateChange.fulfilled, (state, action) => {
         state.userId = action.payload.uid;
         state.nickname = action.payload.displayName;
-        state.avatar = action.payload.photoURL;
+        // state.avatar = action.payload.photoURL;
         state.email = action.payload.email;
         state.stateChange = true;
       })

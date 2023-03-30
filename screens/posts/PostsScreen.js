@@ -13,11 +13,13 @@ export default function PostsScreen({ navigation }) {
   const { nickname, avatar, email } = useSelector(user);
   const getAllPosts = async () => {
     const unsub = await onSnapshot(doc(db, "posts"));
+
     unsub.forEach((doc) => {
       setPosts([{ id: doc.id, ...doc.data() }]);
       console.log(posts);
     });
   };
+
   useEffect(() => {
     getAllPosts();
   }, []);

@@ -108,7 +108,7 @@ export default function RegistrationScreen({ navigation }) {
             <TouchableOpacity
               style={{
                 ...styles.addAvatarBtn,
-                transform: image && [{ rotate: "45deg" }],
+                // transform: image && [{ rotate: "45deg" }],
                 borderColor: image ? "#BDBDBD" : "#FF6C00",
               }}
               onPress={() => {

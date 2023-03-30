@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Image,
@@ -16,9 +16,6 @@ import { userStyles } from "../../styles/user.styles";
 import { db } from "../../firebase/config";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { logout } from "../../redux/auth/operations";
-import { user } from "../../redux/selectors/authSelectors";
-import { useState } from "react";
-import { useSelector } from "react-redux";
 import { user } from "../../redux/selectors/authSelectors";
 
 export default function UserScreen({ navigation }) {
@@ -46,7 +43,7 @@ export default function UserScreen({ navigation }) {
 
   const getUserPosts = async () => {
     const postsRef = await collection(db, "posts");
-    const q = query(postsRef, where("userId", "==", userId));
+    const q = await query(postsRef, where("userId", "==", userId));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       setPosts([{ id: doc.id, ...doc.data() }]);

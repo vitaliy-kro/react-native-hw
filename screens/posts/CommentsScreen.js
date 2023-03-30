@@ -25,7 +25,6 @@ export default function CommentsScreen({ route }) {
   useEffect(() => {
     if (params.post) {
       setPost(params.post);
-      console.log("post");
     }
   }, []);
 
